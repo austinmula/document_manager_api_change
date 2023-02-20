@@ -14,7 +14,7 @@ class UserController extends Controller
     public function index()
     {
 //        $users = User::orderBy('id', 'desc')->get();
-        $users = User::with('role.permissions', 'departments')->get();
+        $users = User::with('role.permissions', 'departments')->orderBy('id', 'desc')->get();
 //        dd($user->all());
         return response()->json([
             'success' => true,
@@ -56,13 +56,28 @@ class UserController extends Controller
                 'success' => false,
                 'message' => 'User not created'
             ], 500);
+    }
 
-//        $sendToEmail = strtolower($request->email);
-//        if(!empty($sendToEmail) && filter_var($sendToEmail, FILTER_VALIDATE_EMAIL)){
-//            Mail::to($sendToEmail)->send(new NewUserMail($request));
-//        }
+    public function destroy($id)
+    {
+        $user =User::all()->find($id);
 
-//        return back()->with(['message' => 'Email successfully sent!']);
-//        return redirect('/users');
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found'
+            ], 400);
+        }
+
+        if ($user->delete()) {
+            return response()->json([
+                'success' => true
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'User can not be deleted'
+            ], 500);
+        }
     }
 }

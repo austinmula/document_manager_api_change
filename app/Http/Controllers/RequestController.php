@@ -86,4 +86,27 @@ class RequestController extends Controller
             ], 500);
     }
 
+    public function destroy($id)
+    {
+        $request =\App\Models\Request::all()->find($id);
+
+        if (!$request) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Request not found'
+            ], 400);
+        }
+
+        if ($request->delete()) {
+            return response()->json([
+                'success' => true
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Request cannot be deleted'
+            ], 500);
+        }
+    }
+
 }
