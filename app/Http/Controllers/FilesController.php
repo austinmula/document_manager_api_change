@@ -13,11 +13,15 @@ class FilesController extends Controller
     {
         $user = Auth::user();
 
-        $files = File::whereHas('access_level' , function($query) use ( $user ){
-            $query->where('role_id',$user->role_id);
-        })->whereHas ('departments' , function($query) use ($user){
-            $query->where('department_id',$user->department_id);
-        })->get();
+        if(auth()->user()->hasRole('admin')){
+            $files = File::all();
+        }else{
+            $files = File::whereHas('access_level' , function($query) use ( $user ){
+                $query->where('role_id',$user->role_id);
+            })->whereHas ('departments' , function($query) use ($user){
+                $query->where('department_id',$user->department_id);
+            })->get();
+        }
 
         $files_noaccess = File::with('departments')->whereDoesntHave('access_level' , function($query) use ( $user ){
             $query->where('role_id', '=', $user->role_id);

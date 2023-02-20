@@ -28,7 +28,7 @@ class TemporaryFilesController extends Controller
         DB::table('temporary_files')->insert($data);
 
         $req = \App\Models\Request::find($request->request_id);
-        $req->status = 2;
+        $req->status_id = 2;
         $req->save();
 
 //        return this newly modified req
