@@ -39,7 +39,16 @@ class FilesController extends Controller
 
     public function show($id)
     {
-        $file = auth()->user()->files()->find($id);
+        $user = Auth::user();
+        if(auth()->user()->hasRole('admin')){
+            $file = File::find($id);
+        }else{
+            $file = File::whereHas('access_level' , function($query) use ( $user ){
+                $query->where('role_id',$user->role_id);
+            })->whereHas ('departments' , function($query) use ($user){
+                $query->where('department_id',$user->department_id);
+            })->find($id);
+        }
 
         if (!$file) {
             return response()->json([

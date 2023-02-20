@@ -33,12 +33,12 @@ Route::post('logout', [PassportController::class, 'logout']);
 Route::resource('files', FilesController::class)->middleware('auth:api');
 Route::resource('requests', RequestController::class)->middleware('auth:api');
 Route::resource('temp-requests-files', TemporaryFilesController::class)->middleware('auth:api');
-Route::resource('departments', DepartmentController::class);
-Route::resource('permissions', PermissionController::class);
-Route::resource('roles', RoleController::class);
+
 
 Route::group(['middleware' => 'role:admin'], function() {
-
+    Route::resource('departments', DepartmentController::class);
+    Route::resource('permissions', PermissionController::class);
+    Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
     Route::resource('file-categories', FileCategoryController::class);
 });
