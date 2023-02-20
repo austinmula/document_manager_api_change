@@ -2,18 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Status;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TemporaryFilesController extends Controller
 {
 
     public function index()
     {
-
         $user = auth()->user();
-
         $requests = \App\Models\Request::with('file', 'user', 'status')->where('request_to', $user->id)->get();
-
         return response()->json([
             'success' => true,
             'data' => $requests
@@ -21,36 +20,23 @@ class TemporaryFilesController extends Controller
     }
     public function store(Request $request)
     {
+        $file_id = $request->file_id;
+        $user_id = $request->user_id;
+        $expires_at = $request->expires_at;
 
-//        find file using its id
+        $data = array('file_id' => $file_id, 'user_id'=> $user_id, 'expires_at'=>$expires_at);
+        DB::table('temporary_files')->insert($data);
 
-   
-//        attach the
-//        $new_request = new \App\Models\Request();
-//
-//        $new_request->name = $request->name;
-//        $new_request->message = $request->message;
-//        $new_request->status_id = $request->status_id;
-//        $new_request->file_id = $request->file_id;
-//        $new_request->user_id = (auth()->id());
-//        $new_request->request_to = $request->request_to;
+        $req = \App\Models\Request::find($request->request_id);
+        $req->status = 2;
+        $req->save();
 
+//        return this newly modified req
+        $requests = \App\Models\Request::with('file', 'user', 'status')->where('id', $request->request_id)->get();
 
-
-
-//        if (auth()->user()->requests()->save($new_request)){
-//            event(new UserMadePermissionRequest('johndoe@mail.com', 'admin@admin.com', 'Hello Need Access to ...'));
-//            return response()->json([
-//                'success' => true,
-//                'data' => $new_request->toArray()
-//            ]);
-//        }
-
-//        else
-//
-//            return response()->json([
-//                'success' => false,
-//                'message' => 'Request not added'
-//            ], 500);
+        return response()->json([
+            'success' => true,
+            'data' => $requests
+        ]);
     }
 }

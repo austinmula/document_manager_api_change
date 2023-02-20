@@ -14,5 +14,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+//    return response()->file('files/MdALnktiKzjPSQCFdKWPhJElyFTBwt5lnkdYnEsS.pdf'); // <-- display file directly in browser
     return view('welcome');
 });
